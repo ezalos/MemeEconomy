@@ -1,21 +1,30 @@
 from investment import Investment
+import praw
+from time import sleep
+from datetime import datetime
 
 class Portfolio:
     def __init__(self, auth_config):
         self.reddit = praw.Reddit(**auth_config)
         self.refresh_balance()
-        self.sub_all = reddit.subreddit('All')
-        self.sub_meme = reddit.subreddit('MemeEconomy')
+        self.sub_all = self.reddit.subreddit('All')
+        self.sub_meme = self.reddit.subreddit('MemeEconomy')
         self.investments = []
         self.find_investments()
 
     def refresh_balance(self):
-        post = Investment.find_bot_comment(self.reddit.subreddit('MemeEconomy').hot(limit=1)[0]).reply("!balance")
-        while len(post.comments) == 0:
+        post = None
+        for submission in self.reddit.subreddit('MemeEconomy').hot(limit=1):
+            post = Investment.find_bot_comment(submission).reply("!balance")
+            break
+        while len(post.replies) == 0:
             sleep(10)
             post.refresh()
             #TODO
-        self.balance = int(post.comments[0][34:-10])
+        for reply in post.replies:
+            self.balance = int(reply.body[38:-13].replace(',', ''))
+            break
+        print("New balance: " + str(self.balance))
 
     def find_worth(submissions, score = 0, age = 10):
         investments = []
@@ -27,5 +36,5 @@ class Portfolio:
 
 
     def find_investments(self):
-        self.investments += find_worth(self.sub_all.hot(limit=1000), 100, 3)
-        self.investments += find_worth(self.sub_meme.new(limit=1000), 30, 0.3)
+        self.investments += Portfolio.find_worth(self.sub_all.hot(limit=1000), 100, 3)
+        self.investments += Portfolio.find_worth(self.sub_meme.new(limit=1000), 30, 0.3)

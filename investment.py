@@ -1,5 +1,6 @@
 from enum import Enum
 import config
+import praw
 
 class State(Enum):
     finded = 0
