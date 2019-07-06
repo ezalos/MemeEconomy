@@ -27,3 +27,18 @@ class Investment:
         for comment in bot_comment.comments:
             if comment.author == config.reddit["username"]:
                 return comment
+
+    def invest(self, amount):
+        self.submission.downvote()
+        self.invested_comment = self.bot_comment.reply("!invest " + str(amount))
+        self.state = State.invested
+        print(str(amount) + " invested in https://reddit.com" + self.invested_comment.permalink)
+
+    def check_investment(self):
+        self.invested_comment.refresh()
+        for reply in self.invested_comment.replies:
+            if reply.author == "MemeInvestor_Bot":
+                print("Reply of " + comment.submission.title)
+                self.submission.upvote()
+                self.state = State.validated
+                break
