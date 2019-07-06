@@ -12,10 +12,10 @@ my_comments = []
 def pre_invest(submission, investment):
     for comment in submission.comments:
         if comment.author == "MemeInvestor_Bot":
-            #submission.downvote()
-            #my_reply = comment.reply("!invest " + str(investment))
+            submission.downvote()
+            my_reply = comment.reply("!invest " + str(investment))
             print("https://reddit.com" + my_reply.permalink)
-            #my_comments.append((my_reply, submission))
+            my_comments.append((my_reply, submission))
             break
 
 
