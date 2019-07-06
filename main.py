@@ -35,8 +35,8 @@ def main():
         print("I have " + str(len(my_comments)) + " comments")
         for comment, submission in my_comments[:]:
             comment.refresh()
-            for replie in comment.replies:
-                if comment.author == "MemeInvestor_Bot":
+            for reply in comment.replies:
+                if reply.author == "MemeInvestor_Bot":
                     print("Reply of " + submission.title)
                     submission.upvote()
                     my_comments.remove((comment, submission))
