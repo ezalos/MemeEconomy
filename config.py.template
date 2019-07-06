@@ -1,7 +1,9 @@
-config = {
+reddit = {
     "client_id"      : 'tps_5PGtYryRjQ',
     "client_secret"  : 'ntLynLho6Y1cfv35zWy_fFVtFD0',
     "user_agent"     : 'MemeEconomyMillionaryBot',
     "username"       : '',
     "password"       : '',
 }
+
+investment = "1%"

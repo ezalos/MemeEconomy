@@ -3,20 +3,20 @@
 import praw
 from datetime import datetime
 from time import sleep
-from config import config
+import config
 
 my_comments = []
 
-def invest(submission, investement):
+def invest(submission, investment):
     for comment in submission.comments:
         if comment.author == "MemeInvestor_Bot":
-            my_reply = comment.reply("!invest " + str(investement))
-            print(my_reply.permalink)
+            my_reply = comment.reply("!invest " + str(investment))
+            print("https://reddit.com" + my_reply.permalink)
             my_comments.append((my_reply, submission))
             break
 
 def main():
-    reddit = praw.Reddit(**config)
+    reddit = praw.Reddit(**config.reddit)
 
     sub_all = reddit.subreddit('All')
     sub_meme = reddit.subreddit('MemeEconomy')
@@ -26,7 +26,7 @@ def main():
             hour = (datetime.now() - datetime.fromtimestamp(submission.created_utc)).total_seconds() / (60 * 60);
             print(submission.title, submission.permalink, submission.score, hour)
             submission.downvote()
-            invest(submission, 1)
+            invest(submission, config.investment)
 
     while len(my_comments) != 0:
         sleep(20)
