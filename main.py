@@ -28,7 +28,7 @@ def post_invest(comment, submission):
             break
 
 
-def invest_in_sub(submissions, score, age):
+def invest_in_sub(submissions, score = 0, age = 10):
     for submission in submissions:
         sub_age = (datetime.now() - datetime.fromtimestamp(submission.created_utc)).total_seconds() / (60 * 60);
         if submission.subreddit == "MemeEconomy" and sub_age <= age and submission.score >= score:
