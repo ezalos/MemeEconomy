@@ -35,6 +35,13 @@ def invest_in_sub(submissions, score, age):
             print(submission.title, "https://reddit.com" + submission.permalink, submission.score, sub_age)
             pre_invest(submission, config.investment)
 
+def background_check():
+    while len(my_comments) != 0:
+        sleep(2 * 60)
+        print("I have " + str(len(my_comments)) + " comments")
+        for comment, submission in my_comments[:]:
+            post_invests(comment, submission)
+            my_comments.remove((comment, submission))
 
 def main():
     reddit = praw.Reddit(**config.reddit)
@@ -45,13 +52,7 @@ def main():
     invest_in_sub(sub_all.hot(limit=1000), 100, 3)
     invest_in_sub(sub_meme.new(limit=1000), 30, 0.3)
     print("End of prospecting")
-
-    while len(my_comments) != 0:
-        sleep(2 * 60)
-        print("I have " + str(len(my_comments)) + " comments")
-        for comment, submission in my_comments[:]:
-            post_invests(comment, submission)
-            my_comments.remove((comment, submission))
+    background_check()
 
 
 if __name__ == "__main__":
