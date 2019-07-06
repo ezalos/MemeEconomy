@@ -5,6 +5,7 @@ from datetime import datetime
 from time import sleep
 import config
 from investment import Investment, State
+from portfolio import Portfolio
 
 def pre_invest(submission, investment):
     for comment in comment.submission.comments:
@@ -39,23 +40,9 @@ def background_check():
             post_invests(comment)
             my_investments.remove(comment)
 
-def find_investments(reddit):
-    sub_all = reddit.subreddit('All')
-    sub_meme = reddit.subreddit('MemeEconomy')
-    investments = []
-    investments += is_worth(sub_all.hot(limit=1000), 100, 3)
-    investments += is_worth(sub_meme.new(limit=1000), 30, 0.3)
-    return investments
 
 def main():
-    reddit = praw.Reddit(**config.reddit)
-
-    investments = find_investments(reddit)
-
-    # invest_in_sub(sub_all.hot(limit=1000), 100, 3)
-    # invest_in_sub(sub_meme.new(limit=1000), 30, 0.3)
-    print("End of prospecting")
-    background_check(investments)
+    portfolio = Portfolio(config.reddit)
 
 
 if __name__ == "__main__":
