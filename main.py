@@ -6,25 +6,25 @@ from time import sleep
 import config
 
 
-my_comments = []
+my_investments = []
 
 
 def pre_invest(submission, investment):
-    for comment in submission.comments:
+    for comment in comment.submission.comments:
         if comment.author == "MemeInvestor_Bot":
-            submission.downvote()
+            comment.submission.downvote()
             my_reply = comment.reply("!invest " + str(investment))
             print("https://reddit.com" + my_reply.permalink)
-            my_comments.append((my_reply, submission))
+            my_investments.append(my_reply)
             break
 
 
-def post_invest(comment, submission):
+def post_invest(comment):
     comment.refresh()
     for reply in comment.replies:
         if reply.author == "MemeInvestor_Bot":
-            print("Reply of " + submission.title)
-            submission.upvote()
+            print("Reply of " + comment.submission.title)
+            comment.submission.upvote()
             break
 
 
@@ -36,12 +36,12 @@ def invest_in_sub(submissions, score = 0, age = 10):
             pre_invest(submission, config.investment)
 
 def background_check():
-    while len(my_comments) != 0:
+    while len(my_investments) != 0:
         sleep(2 * 60)
-        print("I have " + str(len(my_comments)) + " comments")
-        for comment, submission in my_comments[:]:
-            post_invests(comment, submission)
-            my_comments.remove((comment, submission))
+        print("I have " + str(len(my_investments)) + " comments")
+        for comment in my_investments[:]:
+            post_invests(comment)
+            my_investments.remove(comment)
 
 def main():
     reddit = praw.Reddit(**config.reddit)
