@@ -24,9 +24,11 @@ def main():
     for submission in sub_all.hot(limit=1000):
         if submission.subreddit == "MemeEconomy":
             hour = (datetime.now() - datetime.fromtimestamp(submission.created_utc)).total_seconds() / (60 * 60);
-            print(submission.title, submission.permalink, submission.score, hour)
+            print("https://reddit.com" + submission.title, submission.permalink, submission.score, hour)
             submission.downvote()
             invest(submission, config.investment)
+
+    print("End of prospecting")
 
     while len(my_comments) != 0:
         sleep(20)
@@ -35,6 +37,7 @@ def main():
             comment.refresh()
             for replie in comment.replies:
                 if comment.author == "MemeInvestor_Bot":
+                    print("Reply of " + submission.title)
                     submission.upvote()
                     my_comments.remove((comment, submission))
                     break
