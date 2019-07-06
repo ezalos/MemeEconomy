@@ -43,9 +43,12 @@ class Investment:
 				break
 		if self.state == State.finded:
 			self.submission.downvote()
-			self.invested_comment = self.bot_comment.reply("!invest " + str(amount) +"%")
+			if portfolio.balance > 1000:
+				self.invested_comment = self.bot_comment.reply("!invest " + str(amount) +"%")
+			else:
+				self.invested_comment = self.bot_comment.reply("!invest 100")
 			self.state = State.invested
-			print(str(amount) + "% invested in https://reddit.com" + self.invested_comment.permalink)
+			print(str(amount) + self.invested_comment.body + "at https://reddit.com" + self.invested_comment.permalink)
 			portfolio.balance -= portfolio.blance * (amount / 100)
 
 	def check_investment(self):
