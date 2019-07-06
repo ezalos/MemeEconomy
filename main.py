@@ -31,7 +31,7 @@ def main():
     print("End of prospecting")
 
     while len(my_comments) != 0:
-        sleep(20)
+        sleep(2 * 60)
         print("I have " + str(len(my_comments)) + " comments")
         for comment, submission in my_comments[:]:
             comment.refresh()
