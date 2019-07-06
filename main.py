@@ -24,7 +24,7 @@ def main():
     for submission in sub_all.hot(limit=1000):
         if submission.subreddit == "MemeEconomy":
             hour = (datetime.now() - datetime.fromtimestamp(submission.created_utc)).total_seconds() / (60 * 60);
-            print("https://reddit.com" + submission.title, submission.permalink, submission.score, hour)
+            print(submission.title, "https://reddit.com" + submission.permalink, submission.score, hour)
             submission.downvote()
             invest(submission, config.investment)
 
