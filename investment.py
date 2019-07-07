@@ -34,21 +34,26 @@ class Investment:
 				return comment
 
 	def invest(self, portfolio, amount):
-		for comment in portfolio.user.comments.new(limit=50):
-			if comment.submission == self.submission:
-				self.state = State.invested
-				self.invested_comment = comment
-				print("We found an already invested meme at https://reddit.com" + self.invested_comment.permalink)
-				print("Body is : " + self.invested_comment.body)
-				break
+		if self.state == State.finded:
+			for comment in portfolio.user.comments.new(limit=50):
+				if comment.body.find("!invest") >= 0:
+					if comment.submission == self.submission:
+						self.state = State.invested
+						self.invested_comment = comment
+						print("We found an already invested meme at https://reddit.com" + self.invested_comment.permalink)
+						print("Body is : " + self.invested_comment.body)
+						break
 		if self.state == State.finded:
 			self.submission.downvote()
-			if portfolio.balance * (amount / 100) > 100:
-				self.invested_comment = self.bot_comment.reply("!invest " + str(amount) +"%")
-				portfolio.balance -= int(portfolio.balance * (amount / 100))
+			if portfolio.balance / 100 < amount and portfolio.balance > amount:
+				self.invested_comment = self.bot_comment.reply("!invest " + str(int(amount)))
+				portfolio.balance -= int(amount)
 			elif portfolio.balance * (10 / 100) > 100:
 				self.invested_comment = self.bot_comment.reply("!invest 10%")
 				portfolio.balance -= int(portfolio.balance * (10 / 100))
+			elif portfolio.balance * (1 / 100) > 100:
+				self.invested_comment = self.bot_comment.reply("!invest 1%")
+				portfolio.balance -= int(portfolio.balance * (1 / 100))
 			else:
 				self.invested_comment = self.bot_comment.reply("!invest 100")
 				portfolio.balance -= 100
@@ -56,12 +61,21 @@ class Investment:
 			print(str(amount) + self.invested_comment.body + "at https://reddit.com" + self.invested_comment.permalink)
 
 	def check_investment(self):
-		if self.state == State.invested:
+		if self.state == State.invested or self.state == State.validated:
 			self.invested_comment.refresh()
 			for reply in self.invested_comment.replies:
 				if reply.author == "MemeInvestor_bot":
 					print("Reply of " + reply.submission.title)
 					print(reply.body)
-					self.submission.upvote()
-					self.state = State.validated
-					break
+					if reply.body.find("minimum") >= 0:
+						self.state = State.finded
+						return -1
+						#TODO
+					elif reply.body.find("UPDATE") >= 0:
+						self.state = State.finished
+						#TODO
+					else:
+						self.submission.upvote()
+						self.state = State.validated
+					return 0
+		return 0
