@@ -30,6 +30,9 @@ class Portfolio:
 		print("New balance: " + str(self.balance))
 
 	def find_worth(submissions, my_investments, score = 0, age = 10):
+		print("\tSearching for: ")
+		print("\t\t       " + "at least " + str(score) + " upvotes")
+		print("\t\t       " + "and less " + str(age) + " hours")
 		investments = []
 		for submission in submissions:
 			sub_age = (datetime.now() - datetime.fromtimestamp(submission.created_utc)).total_seconds() / (60 * 60);
@@ -48,10 +51,16 @@ class Portfolio:
 
 	def find_investments(self):
 		print("Worth of ALL HOT:")
-		self.investments += Portfolio.find_worth(self.sub_all.hot(limit=100), self.investments, 100, 5)
-		print("Worth of M_E NEW:")
+		self.investments += Portfolio.find_worth(self.sub_all.hot(limit=1000), self.investments, 100, 7)
+		print("Worth of M_E NEW BIG:")
 		self.investments += Portfolio.find_worth(self.sub_meme.new(limit=1000), self.investments, 30, 2)
-		print("Worth of M_E HOT:")
+		print("Worth of M_E NEW SMALL:")
+		self.investments += Portfolio.find_worth(self.sub_meme.new(limit=1000), self.investments, 7, 0.1)
+		print("Worth of M_E HOT SMALL:")
 		self.investments += Portfolio.find_worth(self.sub_meme.hot(limit=1000), self.investments, 30, 2)
-		print("Worth of M_E RIS:")
+		print("Worth of M_E HOT BIG:")
+		self.investments += Portfolio.find_worth(self.sub_meme.hot(limit=1000), self.investments, 100, 7)
+		print("Worth of M_E RIS SMALL:")
 		self.investments += Portfolio.find_worth(self.sub_meme.rising(limit=1000), self.investments, 30, 2)
+		print("Worth of M_E RIS BIG:")
+		self.investments += Portfolio.find_worth(self.sub_meme.rising(limit=1000), self.investments, 100, 7)

@@ -49,7 +49,7 @@ class Investment:
 				self.invested_comment = self.bot_comment.reply("!invest 100")
 			self.state = State.invested
 			print(str(amount) + self.invested_comment.body + "at https://reddit.com" + self.invested_comment.permalink)
-			portfolio.balance -= portfolio.blance * (amount / 100)
+			portfolio.balance -= portfolio.balance * (amount / 100)
 
 	def check_investment(self):
 		if self.state == State.invested:
