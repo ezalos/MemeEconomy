@@ -39,17 +39,21 @@ class Investment:
 				self.state = State.invested
 				self.invested_comment = comment
 				print("We found an already invested meme at https://reddit.com" + self.invested_comment.permalink)
-				print(self.invested_comment.body)
+				print("Body is : " + self.invested_comment.body)
 				break
 		if self.state == State.finded:
 			self.submission.downvote()
-			if portfolio.balance > 1000:
+			if portfolio.balance * (amount / 100) > 100:
 				self.invested_comment = self.bot_comment.reply("!invest " + str(amount) +"%")
+				portfolio.balance -= int(portfolio.balance * (amount / 100))
+			elif portfolio.balance * (10 / 100) > 100:
+				self.invested_comment = self.bot_comment.reply("!invest 10%")
+				portfolio.balance -= int(portfolio.balance * (10 / 100))
 			else:
 				self.invested_comment = self.bot_comment.reply("!invest 100")
+				portfolio.balance -= 100
 			self.state = State.invested
 			print(str(amount) + self.invested_comment.body + "at https://reddit.com" + self.invested_comment.permalink)
-			portfolio.balance -= portfolio.balance * (amount / 100)
 
 	def check_investment(self):
 		if self.state == State.invested:

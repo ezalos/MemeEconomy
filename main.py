@@ -39,18 +39,18 @@ def main():
 	while 1:
 		while loop_on:
 			loop_on = 0
+			portfolio.find_investments()
 			for investement in portfolio.investments:
 				investement.invest(portfolio, 10)
 			sleep(20)
 			for investement in portfolio.investments:
 				investement.check_investment()
-			portfolio.find_investments()
 			for investment in portfolio.investments:
 				if investment.state != State.validated:
 					if investment.state != State.finished:
 						loop_on = 1
 			print_portfolio(portfolio)
-		sleep(3600)
+		sleep(60 * 15)
 
 
 if __name__ == "__main__":

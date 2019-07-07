@@ -36,26 +36,27 @@ class Portfolio:
 		investments = []
 		for submission in submissions:
 			sub_age = (datetime.now() - datetime.fromtimestamp(submission.created_utc)).total_seconds() / (60 * 60);
-			if submission.subreddit == "MemeEconomy" and sub_age <= age and submission.score >= score:
-				no_double = 1
-				for investment in my_investments:
-					if (investment.submission.permalink == submission.permalink):
-						no_double = 0
-				if no_double:
-					print("https://reddit.com" + submission.permalink)
-					print("\tWith score of: " + str(submission.score))
-					print("\tAnd age of: " + str(sub_age) + " hours")
-					investments.append(Investment(submission))
+			if submission.subreddit == "MemeEconomy":
+				if sub_age <= age and submission.score >= score:
+					no_double = 1
+					for investment in my_investments:
+						if (investment.submission.permalink == submission.permalink):
+							no_double = 0
+					if no_double:
+						print("https://reddit.com" + submission.permalink)
+						print("\tWith score of: " + str(submission.score))
+						print("\tAnd age of: " + str(sub_age) + " hours")
+						investments.append(Investment(submission))
 		return investments
 
 
 	def find_investments(self):
 		print("Worth of ALL HOT:")
 		self.investments += Portfolio.find_worth(self.sub_all.hot(limit=1000), self.investments, 100, 7)
-		print("Worth of M_E NEW BIG:")
-		self.investments += Portfolio.find_worth(self.sub_meme.new(limit=1000), self.investments, 30, 2)
 		print("Worth of M_E NEW SMALL:")
 		self.investments += Portfolio.find_worth(self.sub_meme.new(limit=1000), self.investments, 7, 0.1)
+		print("Worth of M_E NEW BIG:")
+		self.investments += Portfolio.find_worth(self.sub_meme.new(limit=1000), self.investments, 30, 2)
 		print("Worth of M_E HOT SMALL:")
 		self.investments += Portfolio.find_worth(self.sub_meme.hot(limit=1000), self.investments, 30, 2)
 		print("Worth of M_E HOT BIG:")
