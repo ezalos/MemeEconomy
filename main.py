@@ -31,6 +31,8 @@ def print_portfolio(portfolio):
 
 def print_investment(investment):
 		# print("\thttps://reddit.com" + investment.submission.permalink)
+		if investment.state == State.finished:
+			return
 		print(PURPLE)
 		if investment.state == State.finded:
 			print("https://reddit.com" + investment.bot_comment.permalink)
