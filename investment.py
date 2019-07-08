@@ -88,7 +88,7 @@ class Investment:
 							print("https://reddit.com" + self.invested_comment.permalink)
 							print(reply.body)
 							print(RESET)
-							portfolio.balance = int(comment.body[reply.body.find("Your new balance is **"):reply.body.find(" MemeCoins**.")].replace(',', ''))
+							portfolio.balance = int(reply.body[reply.body.find("Your new balance is **"):reply.body.find(" MemeCoins**.")].replace(',', ''))
 							portfolio.balance_update = datetime.now()
 						self.state = State.finished
 						#TODO
