@@ -20,8 +20,11 @@ def print_portfolio(portfolio):
 	print("\n\n")
 	print(BLUE)
 	print("MemeCoins:\t" + str(portfolio.balance))
+	print("Base Investment: " + str(portfolio.invest_scale))
 	nb_investment = len(portfolio.investments)
-	print("Number of Investments :" + str(nb_investment))
+	print("Number of Investments:" + str(nb_investment))
+	uptime = portfolio.balance_update
+	print("Last balannce update: " + str(int((datetime.now() - uptime).total_seconds() / (60 * 60))) + " hours " + str(int((datetime.now() - uptime).total_seconds() / 60 % 60)) + " minutes " + str(int((datetime.now() - uptime).total_seconds()) % 60 % 60) + " seconds")
 	if (nb_investment):
 		for investment in portfolio.investments:
 			print_investment(investment)
