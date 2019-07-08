@@ -3,6 +3,15 @@ import config
 import praw
 from praw.models import MoreComments
 
+PURPLE = '\033[95m'
+BLUE = '\033[94m'
+GREEN = '\033[92m'
+YELLOW = '\033[93m'
+RED = '\033[91m'
+RESET = '\033[0m'
+BOLD = '\033[1m'
+UNDERLINE = '\033[4m'
+
 class State(Enum):
 	finded = 0
 	invested = 1
@@ -40,8 +49,6 @@ class Investment:
 					if comment.submission == self.submission:
 						self.state = State.invested
 						self.invested_comment = comment
-						print("We found an already invested meme at https://reddit.com" + self.invested_comment.permalink)
-						print("Body is : " + self.invested_comment.body)
 						break
 		if self.state == State.finded:
 			self.submission.downvote()
@@ -58,24 +65,35 @@ class Investment:
 				self.invested_comment = self.bot_comment.reply("!invest 100")
 				portfolio.balance -= 100
 			self.state = State.invested
-			print(str(amount) + self.invested_comment.body + "at https://reddit.com" + self.invested_comment.permalink)
+			print(GREEN)
+			print("\t" + str(amount) + " ivested at https://reddit.com" + self.invested_comment.permalink)
 
-	def check_investment(self):
+	def check_investment(self, portfolio):
+		a = 0
 		if self.state == State.invested or self.state == State.validated:
 			self.invested_comment.refresh()
 			for reply in self.invested_comment.replies:
 				if reply.author == "MemeInvestor_bot":
-					print("Reply of " + reply.submission.title)
-					print(reply.body)
 					if reply.body.find("minimum") >= 0:
 						self.state = State.finded
-						return -1
+						a = -1
+						print(RED)
+						print("https://reddit.com" + self.invested_comment.permalink)
+						print(reply.body)
+						print(RESET)
 						#TODO
 					elif reply.body.find("UPDATE") >= 0:
+						if self.state == State.validated:
+							print(GREEN)
+							print("https://reddit.com" + self.invested_comment.permalink)
+							print(reply.body)
+							print(RESET)
+							portfolio.balance = int(comment.body[reply.body.find("Your new balance is **"):reply.body.find(" MemeCoins**.")].replace(',', ''))
+							portfolio.balance_update = datetime.now()
 						self.state = State.finished
 						#TODO
 					else:
 						self.submission.upvote()
 						self.state = State.validated
-					return 0
+					return a
 		return 0

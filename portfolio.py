@@ -4,64 +4,60 @@ import praw
 from time import sleep
 from datetime import datetime
 
+PURPLE = '\033[95m'
+BLUE = '\033[94m'
+GREEN = '\033[92m'
+YELLOW = '\033[93m'
+RED = '\033[91m'
+RESET = '\033[0m'
+BOLD = '\033[1m'
+UNDERLINE = '\033[4m'
+
 class Portfolio:
 	def __init__(self, auth_config):
+		self.uptime = datetime.now()
+		print("Asking for Reddit OAuth...")
 		self.reddit = praw.Reddit(**auth_config)
-		self.balance = 10000
 		self.user = self.reddit.redditor(config.reddit["username"])
-		self.refresh_balance()
 		self.sub_all = self.reddit.subreddit('All')
 		self.sub_meme = self.reddit.subreddit('MemeEconomy')
 		self.investments = []
-		self.find_investments()
+		print("Done")
+		self.balance = 0
+		self.refresh_balance()
+		self.balance_update = datetime.now()
+		self.invest_scale = int(self.balance / 4) + 1
 
 	def refresh_balance(self):
 		post = None
-		for submission in self.reddit.subreddit('MemeEconomy').hot(limit=1):
-			post = Investment.find_bot_comment(submission).reply("!balance")
-			break
-		while len(post.replies) == 0:
-			sleep(10)
-			post.refresh()
-			#TODO
-		for reply in post.replies:
-			self.balance = int(reply.body[38:-13].replace(',', ''))
-			break
+		GREEN = '\033[92m'
+		print(GREEN)
+		print("RESET BALANCE:")
+		print("Checking last sent orders...")
+		print(BLUE)
+		for comment in self.user.comments.new(limit=50):
+			if comment.body.find("!invest") >= 0:
+				break;
+			if comment.body.find("!balance") >= 0:
+				if len(comment.replies) == 0:
+					print("Cant access last orders...")
+				for reply in comment.replies:
+					print(comment.body)
+					if comment.body.find("account balance") >= 0:
+						self.balance = int(comment.body[38:-13].replace(',', ''))
+						break
+		if self.balance == 0:
+			print(RED)
+			print("Asking for balance...")
+			for submission in self.reddit.subreddit('MemeEconomy').hot(limit=1):
+				post = Investment.find_bot_comment(submission).reply("!balance")
+				break
+			while len(post.replies) == 0:
+				sleep(10)
+				post.refresh()
+				#TODO
+			for reply in post.replies:
+				self.balance = int(reply.body[38:-13].replace(',', ''))
+				break
+		print(GREEN)
 		print("New balance: " + str(self.balance))
-
-	def find_worth(submissions, my_investments, score = 0, age = 10):
-		print("\tSearching for: ")
-		print("\t\t       " + "at least " + str(score) + " upvotes")
-		print("\t\t       " + "and less " + str(age) + " hours")
-		investments = []
-		for submission in submissions:
-			sub_age = (datetime.now() - datetime.fromtimestamp(submission.created_utc)).total_seconds() / (60 * 60);
-			if submission.subreddit == "MemeEconomy":
-				if sub_age <= age and submission.score >= score:
-					no_double = 1
-					for investment in my_investments:
-						if (investment.submission.permalink == submission.permalink):
-							no_double = 0
-					if no_double:
-						print("https://reddit.com" + submission.permalink)
-						print("\tWith score of: " + str(submission.score))
-						print("\tAnd age of: " + str(sub_age) + " hours")
-						investments.append(Investment(submission))
-		return investments
-
-
-	def find_investments(self):
-		print("Worth of ALL HOT:")
-		self.investments += Portfolio.find_worth(self.sub_all.hot(limit=1000), self.investments, 100, 7)
-		print("Worth of M_E NEW SMALL:")
-		self.investments += Portfolio.find_worth(self.sub_meme.new(limit=1000), self.investments, 7, 0.1)
-		print("Worth of M_E NEW BIG:")
-		self.investments += Portfolio.find_worth(self.sub_meme.new(limit=1000), self.investments, 30, 2)
-		print("Worth of M_E HOT SMALL:")
-		self.investments += Portfolio.find_worth(self.sub_meme.hot(limit=1000), self.investments, 30, 2)
-		print("Worth of M_E HOT BIG:")
-		self.investments += Portfolio.find_worth(self.sub_meme.hot(limit=1000), self.investments, 100, 7)
-		print("Worth of M_E RIS SMALL:")
-		self.investments += Portfolio.find_worth(self.sub_meme.rising(limit=1000), self.investments, 30, 2)
-		print("Worth of M_E RIS BIG:")
-		self.investments += Portfolio.find_worth(self.sub_meme.rising(limit=1000), self.investments, 100, 7)
