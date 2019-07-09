@@ -19,6 +19,8 @@ class Portfolio:
 		print("Asking for Reddit OAuth...")
 		self.reddit = praw.Reddit(**auth_config)
 		self.user = self.reddit.redditor(config.reddit["username"])
+		print(self.reddit)
+		print(self.user)
 		self.sub_all = self.reddit.subreddit('All')
 		self.sub_meme = self.reddit.subreddit('MemeEconomy')
 		self.investments = []
@@ -49,15 +51,20 @@ class Portfolio:
 		if self.balance == 0:
 			print(RED)
 			print("Asking for balance...")
-			for submission in self.reddit.subreddit('MemeEconomy').hot(limit=1):
-				post = Investment.find_bot_comment(submission).reply("!balance")
-				break
-			while len(post.replies) == 0:
-				sleep(10)
-				post.refresh()
-				#TODO
-			for reply in post.replies:
-				self.balance = int(reply.body[38:-13].replace(',', ''))
-				break
+			for submission in self.reddit.subreddit('MemeEconomy').hot(limit=10):
+				comm = Investment.find_bot_comment(submission)
+				if comm:
+					post = comm.reply("!balance")
+					break
+			if post:
+				while len(post.replies) == 0:
+					sleep(10)
+					post.refresh()
+					#TODO
+				for reply in post.replies:
+					self.balance = int(reply.body[38:-13].replace(',', ''))
+					break
+			else:
+				self.balance = 5000
 		print(GREEN)
 		print("New balance: " + str(self.balance))

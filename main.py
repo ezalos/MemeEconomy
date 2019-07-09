@@ -72,7 +72,7 @@ def find_investments(self):
 	print("Worth of ALL HOT:")
 	self.investments += find_worth(self.sub_all.hot(limit=1000), self.investments, 100, 7)
 	print("Worth of M_E NEW SMALL:")
-	self.investments += find_worth(self.sub_meme.new(limit=1000), self.investments, 7, 0.1)
+	self.investments += find_worth(self.sub_meme.new(limit=1000), self.investments, 7, 0.05)
 	print("Worth of M_E NEW BIG:")
 	self.investments += find_worth(self.sub_meme.new(limit=1000), self.investments, 30, 2)
 	print("Worth of M_E HOT SMALL:")
